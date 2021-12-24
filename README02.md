@@ -30,3 +30,56 @@
 
 </html>
 ```
+
+## 03 Firebaseプロジェクトの作成と初回デプロイ
+
+### デプロイまでの流れ
+
+1. プロジェクトの作成<br>
+
+2. リソースロケーションの設定<br>
+
+3. Firebaseのモード変更<br>
+
+4. パッケージのインストール `$ npm install -g firebase-tools`<br>
+
+5. パッケージのインストール `$ npm install --save firebase`<br>
+
+6. firebase login `$ firebase login`<br>
+
+7. firebase init `$ firebase init`<br>
+
+8. `firestore.rules`を編集<br>
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read;
+      allow write: if request.auth.uid != null;
+    }
+  }
+}
+```
+
+9. `$ npm run build`
+
+10. `functions/src/index.ts`を編集<br>
+
+```
+// import * as functions from "firebase-functions"; // コメントアウトしておく
+
+// // Start writing Firebase Functions
+// // https://firebase.google.com/docs/functions/typescript
+//
+// export const helloWorld = functions.https.onRequest((request, response) => {
+//   functions.logger.info("Hello logs!", {structuredData: true});
+//   response.send("Hello from Firebase!");
+// });
+```
+
+11. firebase deploy `$ firebase deploy`<br>
+
+
+
