@@ -1,3 +1,12 @@
+## 02 環境構築
+
++ `$ npx create-react-app YOUR_PROJECT_NAME`<br>
+
++ Material-UI `$ npm install --save @material-ui/core @material-ui/icons @material-ui/system`を実行<br>
+
++ `public/index.html`を編集<br>
+
+```
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +20,7 @@
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-  <title>Chatbot DEMO</title>
+  <title>React App</title>
 </head>
 
 <body>
@@ -20,3 +29,4 @@
 </body>
 
 </html>
+```
