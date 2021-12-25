@@ -7,11 +7,15 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const Answer = (props) => {
-  const { content } = props
+  const { content, select, nextId } = props
   // const classes = useStyles();
 
   return (
-    <Button variant="contained" color="primary">
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={() => select(content, nextId)}
+    >
       {content}
     </Button>
   )
