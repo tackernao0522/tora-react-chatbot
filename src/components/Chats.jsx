@@ -3,15 +3,15 @@ import { createStyles, makeStyles } from '@material-ui/core'
 import List from '@material-ui/core/List'
 import { Chat } from '.'
 
-const useStyles = makeStyles(() => (
+const useStyles = makeStyles(() =>
   createStyles({
-    "chats": {
+    chats: {
       height: 400,
       padding: '0',
-      overflow: 'auto'
-    }
-  })
-))
+      overflow: 'auto',
+    },
+  }),
+)
 
 const Chats = (props) => {
   const { chats } = props
@@ -19,7 +19,7 @@ const Chats = (props) => {
   const classes = useStyles()
 
   return (
-    <List className={classes.chats}>
+    <List className={classes.chats} id={'scroll-area'}>
       {chats.map((chat, index) => (
         <Chat key={index.toString()} text={chat.text} type={chat.type} />
       ))}
