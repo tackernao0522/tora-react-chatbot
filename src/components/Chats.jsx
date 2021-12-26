@@ -1,15 +1,17 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core'
+import { createStyles, makeStyles } from '@material-ui/core'
 import List from '@material-ui/core/List'
 import { Chat } from '.'
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    with: '100%',
-    maxWidth: '36ch',
-    backgroundColor: theme.palette.background.paper,
-  },
-}))
+const useStyles = makeStyles(() => (
+  createStyles({
+    "chats": {
+      height: 400,
+      padding: '0',
+      overflow: 'auto'
+    }
+  })
+))
 
 const Chats = (props) => {
   const { chats } = props
@@ -17,7 +19,7 @@ const Chats = (props) => {
   const classes = useStyles()
 
   return (
-    <List className={classes.root}>
+    <List className={classes.chats}>
       {chats.map((chat, index) => (
         <Chat key={index.toString()} text={chat.text} type={chat.type} />
       ))}
