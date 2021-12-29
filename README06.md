@@ -211,5 +211,193 @@ curl -X POST -H "Content-Type: application/json" -d @dataset.json https://YOUR_R
 
 + `src/ディレクトリに移動する`<br>
 
-+ `$ curl -X POST -H "Content-Type: application/json" -d @dataset.json https://us-central1-chatbot-demo-5be9a.cloudfunctions.net/addDataset.cloudfunctions.net/addDataset`を実行<br>
++ `$ curl -X POST https://us-central1-chatbot-demo-5be9a.cloudfunctions.net/addDataset -H "Content-Type:application/json" -d @dataset.json`を実行<br>
 
+#### Firestoreを使う準備
+
+1. Firestore Consoleからプロジェクトの設定値を取得<br>
+
+2. config.jsに設定値を貼り付けてexport<br>
+
+3. index.jsでさらにexport<br>
+
+4. Firestoreを使うコンポーネントでimport<br>
+
+5. componentDidMount()でデータセット<br>
+
++ `src/firebase`ディレクトリを作成<br>
+
++ `src/firebase/config.js`ファイルを作成<br>
+
++ firebaseコンソールの歯車マークの`プロジェクトの設定`をクリック<br>
+
++ SDKの設定と構成の`構成`を選択して生成されたオブジェクトをコピーして`src/firebase/config.js`にペーストする<br>
+
++ `src/firebase/config.js`を編集<br>
+
+```
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyB_c0ZihamfdM62oxiD3s1Ex3O8Jt77oCU",
+  authDomain: "chatbot-demo-5be9a.firebaseapp.com",
+  projectId: "chatbot-demo-5be9a",
+  storageBucket: "chatbot-demo-5be9a.appspot.com",
+  messagingSenderId: "238509415288",
+  appId: "1:238509415288:web:1730cccb49d153ee31c68d",
+  measurementId: "G-FPNE8WL93F"
+};
+
+export default firebaseConfig
+```
+
++ `src/firebase/index.js`ファイルを作成<br>
+
+```
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import firebaseConfig from "./config";
+
+firebase.initializeApp(firebaseConfig);
+export const db = firebase.firestore();
+```
+
+### ライフサイクル内で非同期処理を制御
+
+#### async付きの即時関数を使う!
+
+`例`<br>
+```
+componentDidMount() {
+  (async() => {
+    // 非同期処理
+    await db.collection('questions').get().then(snapshots => {
+      snapshots.forEach(doc => {
+        dataset[doc.id] = doc.data()
+      })
+    });
+  })();
+}
+```
+
++ `src/App.jsx`を編集<br>
+
+```
+import React, { Component } from 'react'
+import './assets/styles/style.css'
+import { AnswersList, Chats } from './components/index'
+import { FormDialog } from './components/Forms/FormDialog'
+import { db } from './firebase'
+
+export default class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      answers: [],
+      chats: [],
+      currentId: 'init',
+      dataset: {},
+      open: false,
+    }
+    this.selectAnswer = this.selectAnswer.bind(this)
+    this.handleClickOpen = this.handleClickOpen.bind(this)
+    this.handleClose = this.handleClose.bind(this)
+  }
+
+  displayNextQuestion = (nextQuestionId) => {
+    const chats = this.state.chats
+    chats.push({
+      text: this.state.dataset[nextQuestionId].question,
+      type: 'question',
+    })
+
+    this.setState({
+      answers: this.state.dataset[nextQuestionId].answers,
+      chats: chats,
+      currentId: nextQuestionId,
+    })
+  }
+
+  selectAnswer = (selectedAnswer, nextQuestionId) => {
+    switch (true) {
+      case nextQuestionId === 'init':
+        setTimeout(() => this.displayNextQuestion(nextQuestionId), 500)
+        break
+      case nextQuestionId === 'contact':
+        this.handleClickOpen()
+        break
+      case /^https:*/.test(nextQuestionId):
+        const a = document.createElement('a')
+        a.href = nextQuestionId
+        a.target = '_blank'
+        a.click()
+        break
+      default:
+        const chats = this.state.chats
+        chats.push({
+          text: selectedAnswer,
+          type: 'answer',
+        })
+
+        this.setState({
+          chats: chats,
+        })
+        setTimeout(() => this.displayNextQuestion(nextQuestionId), 1000)
+        break
+    }
+  }
+
+  handleClickOpen = () => {
+    this.setState({ open: true })
+  }
+
+  handleClose = () => {
+    this.setState({ open: false })
+  }
+
+  initDataset = (dataset) => {
+    this.setState({ dataset: dataset })
+  }
+
+  componentDidMount() {
+    (async () => {
+      const dataset = this.state.dataset
+
+      await db
+        .collection('questions')
+        .get()
+        .then((snapshots) => {
+          snapshots.forEach((doc) => {
+            const id = doc.id
+            const data = doc.data()
+            dataset[id] = data
+          })
+        })
+      this.initDataset(dataset)
+      const initAnswer = ''
+      this.selectAnswer(initAnswer, this.state.currentId)
+    })()
+  }
+
+  componentDidUpdate(preveProps, prevState, snapShot) {
+    const scrollArea = document.getElementById('scroll-area')
+    if (scrollArea) {
+      scrollArea.scrollTop = scrollArea.scrollHeight
+    }
+  }
+
+  render() {
+    return (
+      <section className="c-section">
+        <div className="c-box">
+          <Chats chats={this.state.chats} />
+          <AnswersList
+            answers={this.state.answers}
+            select={this.selectAnswer}
+          />
+          <FormDialog open={this.state.open} handleClose={this.handleClose} />
+        </div>
+      </section>
+    )
+  }
+}
+```
