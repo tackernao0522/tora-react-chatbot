@@ -1,18 +1,18 @@
-## 10 Cloud FunctionsでAPIを作ってFirestoreを利用する
+## 10 Cloud Functions で API を作って Firestore を利用する
 
-#### REST APIを作る
+#### REST API を作る
 
-1. dataset.jsをjsonファイルに変える<br>
+1. dataset.js を json ファイルに変える<br>
 
-2. Cloud Functionsでhttps関数の作成<br>
+2. Cloud Functions で https 関数の作成<br>
 
 3. デプロイ<br>
 
-4. curlコマンドでAPIを叩く<br>
+4. curl コマンドで API を叩く<br>
 
-+ `src/dataset.js`を`src/dataset.json`に変更<br>
+- `src/dataset.js`を`src/dataset.json`に変更<br>
 
-+ `src/dataset.json`を編集<br>
+- `src/dataset.json`を編集<br>
 
 ```
 {
@@ -111,11 +111,12 @@
 }
 ```
 
-#### Cloud Functionsでhttps関数の作成
+#### Cloud Functions で https 関数の作成
 
-+ `例`<br>
+- `例`<br>
 
 `import`<br>
+
 ```
 import * as functions from 'firebase-functions';
 import * as admin from "firebase-admin";
@@ -124,13 +125,14 @@ const db = admin.firestore();
 ```
 
 `https.onRequestメソッドで関数作成`<br>
+
 ```
 export const addDataset = functions.https.onRequest(async (req: any, res: any) => {
   // 処理を書く
 })
 ```
 
-+ `functions/src/index.ts`を編集<br>
+- `functions/src/index.ts`を編集<br>
 
 ```
 import * as functions from 'firebase-functions';
@@ -164,9 +166,9 @@ export const addDataset = functions.https.onRequest(async (req: any, res: any) =
 });
 ```
 
-+ デプロイをする `$ firebase deploy`<br>
+- デプロイをする `$ firebase deploy`<br>
 
-+ `firebase.json`を編集<br>
+- `firebase.json`を編集<br>
 
 ```
 {
@@ -197,60 +199,61 @@ export const addDataset = functions.https.onRequest(async (req: any, res: any) =
 }
 ```
 
-#### curlでAPIを叩く
+#### curl で API を叩く
 
 `例`<br>
+
 ```
 curl -X POST -H "Content-Type: application/json" -d @dataset.json https://YOUR_REGION-YOUR_PROJECT_NAME.cloudfunctions.net/addDataset
 ```
 
-+ `-x -> POSTメソッドを指定`<br>
-+ `-H -> データ形式にJSONを指定`<br>
-+ `-d -> 渡すデータを指定`<br>
-+ `Cloud FunctionsのURLを指定`<br>
+- `-x -> POSTメソッドを指定`<br>
+- `-H -> データ形式にJSONを指定`<br>
+- `-d -> 渡すデータを指定`<br>
+- `Cloud FunctionsのURLを指定`<br>
 
-+ `src/ディレクトリに移動する`<br>
+- `src/ディレクトリに移動する`<br>
 
-+ `$ curl -X POST https://us-central1-chatbot-demo-5be9a.cloudfunctions.net/addDataset -H "Content-Type:application/json" -d @dataset.json`を実行<br>
+- `$ curl -X POST https://us-central1-chatbot-demo-5be9a.cloudfunctions.net/addDataset -H "Content-Type:application/json" -d @dataset.json`を実行<br>
 
-#### Firestoreを使う準備
+#### Firestore を使う準備
 
-1. Firestore Consoleからプロジェクトの設定値を取得<br>
+1. Firestore Console からプロジェクトの設定値を取得<br>
 
-2. config.jsに設定値を貼り付けてexport<br>
+2. config.js に設定値を貼り付けて export<br>
 
-3. index.jsでさらにexport<br>
+3. index.js でさらに export<br>
 
-4. Firestoreを使うコンポーネントでimport<br>
+4. Firestore を使うコンポーネントで import<br>
 
 5. componentDidMount()でデータセット<br>
 
-+ `src/firebase`ディレクトリを作成<br>
+- `src/firebase`ディレクトリを作成<br>
 
-+ `src/firebase/config.js`ファイルを作成<br>
+- `src/firebase/config.js`ファイルを作成<br>
 
-+ firebaseコンソールの歯車マークの`プロジェクトの設定`をクリック<br>
+- firebase コンソールの歯車マークの`プロジェクトの設定`をクリック<br>
 
-+ SDKの設定と構成の`構成`を選択して生成されたオブジェクトをコピーして`src/firebase/config.js`にペーストする<br>
+- SDK の設定と構成の`構成`を選択して生成されたオブジェクトをコピーして`src/firebase/config.js`にペーストする<br>
 
-+ `src/firebase/config.js`を編集<br>
+- `src/firebase/config.js`を編集<br>
 
 ```
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyB_c0ZihamfdM62oxiD3s1Ex3O8Jt77oCU",
-  authDomain: "chatbot-demo-5be9a.firebaseapp.com",
-  projectId: "chatbot-demo-5be9a",
-  storageBucket: "chatbot-demo-5be9a.appspot.com",
-  messagingSenderId: "238509415288",
-  appId: "1:238509415288:web:1730cccb49d153ee31c68d",
-  measurementId: "G-FPNE8WL93F"
+  apiKey: "XXXXXXXXXXXXXXXXXXXXXXX",
+  authDomain: "XXXXXXXXXXXXXXXXXXXX",
+  projectId: "XXXXXXXXXXXXXX",
+  storageBucket: "XXXXXXXXXXXXXXXXXX",
+  messagingSenderId: "XXXXXXXXXXXXXXXX",
+  appId: "XXXXXXXXXXXXXXXX",
+  measurementId: "XXXXXXXXXXXXXXXX"
 };
 
 export default firebaseConfig
 ```
 
-+ `src/firebase/index.js`ファイルを作成<br>
+- `src/firebase/index.js`ファイルを作成<br>
 
 ```
 import firebase from 'firebase/compat/app';
@@ -263,9 +266,10 @@ export const db = firebase.firestore();
 
 ### ライフサイクル内で非同期処理を制御
 
-#### async付きの即時関数を使う!
+#### async 付きの即時関数を使う!
 
 `例`<br>
+
 ```
 componentDidMount() {
   (async() => {
@@ -279,7 +283,7 @@ componentDidMount() {
 }
 ```
 
-+ `src/App.jsx`を編集<br>
+- `src/App.jsx`を編集<br>
 
 ```
 import React, { Component } from 'react'
